@@ -5,6 +5,8 @@ namespace App\EventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ExceptionListener
 {
@@ -12,9 +14,12 @@ class ExceptionListener
     {
         $exception = $event->getThrowable();
 
-        $statusCode = $exception instanceof HttpExceptionInterface 
-            ? $exception->getStatusCode() 
-            : 500;
+        $statusCode = match(true) {
+            $exception instanceof AuthenticationException => 401,
+            $exception instanceof AccessDeniedException => 403,
+            $exception instanceof HttpExceptionInterface => $exception->getStatusCode(),
+            default => 500
+        };
 
         $response = new JsonResponse([
             'error' => [

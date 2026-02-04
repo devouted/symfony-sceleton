@@ -2,39 +2,70 @@
 
 namespace App\Controller;
 
+use App\Dto\LoginRequestDto;
+use App\Repository\UserRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthController extends AbstractController
 {
+    public function __construct(
+        private UserRepository $userRepository,
+        private UserPasswordHasherInterface $passwordHasher,
+        private JWTTokenManagerInterface $jwtManager
+    ) {}
+
     #[Route('/auth/login', name: 'auth_login', methods: ['POST'])]
-    public function login(Request $request, ValidatorInterface $validator): JsonResponse
+    #[OA\Post(
+        path: '/api/auth/login',
+        description: 'User authentication',
+        summary: 'Login with email and password'
+    )]
+    #[OA\RequestBody(content: new Model(type: LoginRequestDto::class))]
+    #[OA\Response(
+        response: 200,
+        description: 'JWT token and user data',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGc...'),
+                new OA\Property(
+                    property: 'user',
+                    properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                        new OA\Property(property: 'email', type: 'string', example: 'test@example.com'),
+                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'))
+                    ],
+                    type: 'object'
+                )
+            ]
+        )
+    )]
+    #[OA\Response(response: 401, description: 'Invalid credentials')]
+    #[OA\Response(response: 422, description: 'Validation error')]
+    #[OA\Tag(name: 'Authentication')]
+    public function login(#[MapRequestPayload] LoginRequestDto $loginRequest): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $user = $this->userRepository->findOneBy(['email' => $loginRequest->email]);
 
-        $constraints = new Assert\Collection([
-            'email' => [new Assert\NotBlank(), new Assert\Email()],
-            'password' => [new Assert\NotBlank(), new Assert\Length(min: 6)]
-        ]);
-
-        $violations = $validator->validate($data, $constraints);
-
-        if (count($violations) > 0) {
-            $errors = [];
-            foreach ($violations as $violation) {
-                $errors[$violation->getPropertyPath()] = $violation->getMessage();
-            }
-            return $this->json(['errors' => $errors], 400);
+        if (!$user || !$this->passwordHasher->isPasswordValid($user, $loginRequest->password)) {
+            return $this->json(['error' => 'Invalid credentials'], 401);
         }
 
-        // TODO: Implement JWT authentication logic
+        $token = $this->jwtManager->create($user);
+
         return $this->json([
-            'message' => 'Login endpoint - JWT authentication to be implemented',
-            'email' => $data['email']
+            'token' => $token,
+            'user' => [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'roles' => $user->getRoles()
+            ]
         ]);
     }
 }
