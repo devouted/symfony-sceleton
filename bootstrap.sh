@@ -23,6 +23,9 @@ docker compose exec -T php composer install --working-dir=/var/www/html
 echo "🔄 Running composer update to sync lock file..."
 docker compose exec -T php composer update --working-dir=/var/www/html --no-interaction --no-audit
 
+echo "🗄️  Running database migrations..."
+docker compose exec -T php php /var/www/html/bin/console doctrine:migrations:migrate --no-interaction
+
 echo "✅ Bootstrap completed!"
 echo ""
 echo "Access the application at: http://localhost"
