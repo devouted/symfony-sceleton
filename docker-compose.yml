@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  php:
+    build: .
+    container_name: symfony_php
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - symfony
+
+  apache:
+    image: httpd:2.4-alpine
+    container_name: symfony_apache
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./config/apache.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    depends_on:
+      - php
+    networks:
+      - symfony
+    command: |
+      sh -c '
+      echo "LoadModule proxy_module modules/mod_proxy.so" >> /usr/local/apache2/conf/httpd.conf &&
+      echo "LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so" >> /usr/local/apache2/conf/httpd.conf &&
+      echo "Include conf/extra/httpd-vhosts.conf" >> /usr/local/apache2/conf/httpd.conf &&
+      httpd-foreground
+      '
+
+  mysql:
+    image: mariadb:11
+    container_name: symfony_mysql
+    environment:
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - symfony
+
+  redis:
+    image: redis:alpine
+    container_name: symfony_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - symfony
+
+networks:
+  symfony:
+    driver: bridge
+
+volumes:
+  mysql_data:
