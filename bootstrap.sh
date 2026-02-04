@@ -6,19 +6,22 @@ echo "🚀 Bootstrap Symfony API CRM"
 echo "=============================="
 
 echo "📦 Stopping existing containers..."
-docker-compose down -v
+docker compose down -v
 
 echo "🔨 Building Docker images..."
-docker-compose build --no-cache
+docker compose build --no-cache
 
 echo "🚀 Starting containers..."
-docker-compose up -d
+docker compose up -d
 
 echo "⏳ Waiting for containers to be ready..."
 sleep 5
 
 echo "📚 Installing Composer dependencies..."
-docker-compose exec -T php composer install --working-dir=/var/www/html
+docker compose exec -T php composer install --working-dir=/var/www/html
+
+echo "🔄 Running composer update to sync lock file..."
+docker compose exec -T php composer update --working-dir=/var/www/html --no-interaction --no-audit
 
 echo "✅ Bootstrap completed!"
 echo ""
