@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Dto\Response\AdminTestResponse;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,9 +34,9 @@ class AdminController extends AbstractController
     #[OA\Tag(name: 'Admin')]
     public function test(): JsonResponse
     {
-        return $this->json([
-            'message' => 'Admin access granted',
-            'user' => $this->getUser()->getUserIdentifier()
-        ]);
+        $response = new AdminTestResponse();
+        $response->message = 'Admin access granted';
+        $response->user = $this->getUser()->getUserIdentifier();
+        return $this->json($response);
     }
 }

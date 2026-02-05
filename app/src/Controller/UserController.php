@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Dto\Response\UserResponse;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,11 +35,6 @@ class UserController extends AbstractController
     public function me(): JsonResponse
     {
         $user = $this->getUser();
-
-        return $this->json([
-            'id' => $user->getId(),
-            'email' => $user->getUserIdentifier(),
-            'roles' => $user->getRoles()
-        ]);
+        return $this->json(UserResponse::fromEntity($user));
     }
 }

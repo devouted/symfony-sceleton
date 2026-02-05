@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
-use App\Dto\LoginRequestDto;
+use App\Dto\Request\LoginRequestDto;
+use App\Dto\Response\LoginResponse;
+use App\Dto\Response\UserResponse;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -59,13 +61,10 @@ class AuthController extends AbstractController
 
         $token = $this->jwtManager->create($user);
 
-        return $this->json([
-            'token' => $token,
-            'user' => [
-                'id' => $user->getId(),
-                'email' => $user->getEmail(),
-                'roles' => $user->getRoles()
-            ]
-        ]);
+        $response = new LoginResponse();
+        $response->token = $token;
+        $response->user = UserResponse::fromEntity($user);
+
+        return $this->json($response);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Dto;
+namespace App\Dto\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class LoginRequestDto
+class CreateUserRequest
 {
     #[Assert\NotBlank]
     #[Assert\Email]
@@ -13,4 +13,7 @@ class LoginRequestDto
     #[Assert\NotBlank]
     #[Assert\Length(min: 6)]
     public string $password;
+
+    #[Assert\NotBlank]
+    public array $roles = ['ROLE_USER'];
 }
