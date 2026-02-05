@@ -25,4 +25,4 @@ docker-compose down
 
 ## Serwer webowy
 
-- Apache 2.4 z PHP-FPM
+- Apache 2.4 z mod_php (PHP 8.3)
