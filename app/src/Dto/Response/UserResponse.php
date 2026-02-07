@@ -2,7 +2,9 @@
 
 namespace App\Dto\Response;
 
-class UserResponse
+use App\Dto\ResponseDtoInterface;
+
+class UserResponse implements ResponseDtoInterface
 {
     public int $id;
     public string $email;

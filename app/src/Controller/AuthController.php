@@ -9,13 +9,12 @@ use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-class AuthController extends AbstractController
+class AuthController extends DefaultController
 {
     public function __construct(
         private UserRepository $userRepository,
@@ -65,6 +64,6 @@ class AuthController extends AbstractController
         $response->token = $token;
         $response->user = UserResponse::fromEntity($user);
 
-        return $this->json($response);
+        return $this->response($response);
     }
 }

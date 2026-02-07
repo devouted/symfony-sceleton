@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -19,7 +18,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/users')]
 #[IsGranted('ROLE_ADMIN')]
-class UserManagementController extends AbstractController
+class UserManagementController extends DefaultController
 {
     public function __construct(
         private UserRepository $userRepository,
@@ -56,7 +55,7 @@ class UserManagementController extends AbstractController
         if (!$user) {
             return $this->json(['error' => 'User not found'], 404);
         }
-        return $this->json(UserResponse::fromEntity($user));
+        return $this->response(UserResponse::fromEntity($user));
     }
 
     #[Route('', name: 'admin_users_create', methods: ['POST'])]
@@ -78,7 +77,7 @@ class UserManagementController extends AbstractController
         $this->em->persist($user);
         $this->em->flush();
 
-        return $this->json(UserResponse::fromEntity($user), 201);
+        return $this->response(UserResponse::fromEntity($user));
     }
 
     #[Route('/{id}', name: 'admin_users_update', methods: ['PUT'])]
@@ -104,7 +103,7 @@ class UserManagementController extends AbstractController
         }
 
         $this->em->flush();
-        return $this->json(UserResponse::fromEntity($user));
+        return $this->response(UserResponse::fromEntity($user));
     }
 
     #[Route('/{id}', name: 'admin_users_delete', methods: ['DELETE'])]
@@ -148,6 +147,6 @@ class UserManagementController extends AbstractController
         $user->setRoles($request->roles);
         $this->em->flush();
 
-        return $this->json(UserResponse::fromEntity($user));
+        return $this->response(UserResponse::fromEntity($user));
     }
 }

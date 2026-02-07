@@ -3,11 +3,10 @@
 namespace App\Controller;
 
 use OpenApi\Attributes as OA;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-class HealthController extends AbstractController
+class HealthController extends DefaultController
 {
     #[Route('/health', name: 'health', methods: ['GET'])]
     #[OA\Get(

@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\Dto\Response\UserResponse;
 use OpenApi\Attributes as OA;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class UserController extends AbstractController
+class UserController extends DefaultController
 {
     #[Route('/me', name: 'user_me', methods: ['GET'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
@@ -35,6 +34,6 @@ class UserController extends AbstractController
     public function me(): JsonResponse
     {
         $user = $this->getUser();
-        return $this->json(UserResponse::fromEntity($user));
+        return $this->response(UserResponse::fromEntity($user));
     }
 }
