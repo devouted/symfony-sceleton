@@ -77,7 +77,7 @@ class UserManagementController extends DefaultController
         $this->em->persist($user);
         $this->em->flush();
 
-        return $this->response(UserResponse::fromEntity($user));
+        return $this->response(UserResponse::fromEntity($user), 201);
     }
 
     #[Route('/{id}', name: 'admin_users_update', methods: ['PUT'])]

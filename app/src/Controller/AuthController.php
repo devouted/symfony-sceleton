@@ -60,9 +60,10 @@ class AuthController extends DefaultController
 
         $token = $this->jwtManager->create($user);
 
-        $response = new LoginResponse();
-        $response->token = $token;
-        $response->user = UserResponse::fromEntity($user);
+        $response = new LoginResponse(
+            $token,
+            UserResponse::fromEntity($user)
+        );
 
         return $this->response($response);
     }

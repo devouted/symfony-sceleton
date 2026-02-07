@@ -8,9 +8,10 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(schema: 'LoginResponse')]
 class LoginResponse implements ResponseDtoInterface
 {
-    #[OA\Property(example: 'eyJ0eXAiOiJKV1QiLCJhbGc...')]
-    public string $token;
-
-    #[OA\Property]
-    public UserResponse $user;
+    public function __construct(
+        #[OA\Property(example: 'eyJ0eXAiOiJKV1QiLCJhbGc...')]
+        public readonly string $token,
+        #[OA\Property]
+        public readonly UserResponse $user
+    ) {}
 }

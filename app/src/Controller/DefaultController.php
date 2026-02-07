@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends AbstractController
 {
-    protected function response(ResponseDtoInterface $dto): JsonResponse
+    protected function response(ResponseDtoInterface $dto, int $status = 200): JsonResponse
     {
-        return $this->json($dto);
+        return $this->json($dto, $status);
     }
 }
