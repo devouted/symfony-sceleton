@@ -2,6 +2,7 @@
 
 namespace App\Dto\Request;
 
+use App\Enum\UserRole;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateUserRequest
@@ -15,5 +16,8 @@ class CreateUserRequest
     public string $password;
 
     #[Assert\NotBlank]
+    #[Assert\All([
+        new Assert\Choice(callback: [UserRole::class, 'getValues'])
+    ])]
     public array $roles = ['ROLE_USER'];
 }
