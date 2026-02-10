@@ -9,12 +9,21 @@
 - Przypisz do siebie (`redmine_assign_issue`)
 - Zmień status (`redmine_transition_issue`)
 
+### Praca z Epicami (jeśli zadanie ma rodzica)
+- Jeśli podejmowane zadanie jest **pierwszym aktywnym dzieckiem epica**:
+    - sprawdź status epica
+    - jeśli epic = `Backlog` → ustaw `In Progress`
+- Zmiana statusu epica jest dozwolona wyłącznie w celu odzwierciedlenia faktycznego startu prac
+
 ### Zakończ pracę
 - Status: `In Progress` → `Code Review`
 - Dodaj komentarz z opisem zmian
 
 ### Wznów pracę (po QA)
 - Status: `In Progress` (jeśli QA cofnęło)
+- Jeśli QA cofnęło zadanie:
+    - zapoznaj się z komentarzem QA
+    - uzupełnij komentarz o plan poprawek
 
 ## Dozwolone operacje
 
