@@ -13,6 +13,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -67,7 +68,7 @@ class UserManagementController extends DefaultController
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            throw new NotFoundHttpException('User not found');
         }
         return $this->response(UserResponse::fromEntity($user));
     }
@@ -115,7 +116,7 @@ class UserManagementController extends DefaultController
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            throw new NotFoundHttpException('User not found');
         }
 
         if ($request->email) $user->setEmail($request->email);
@@ -141,13 +142,13 @@ class UserManagementController extends DefaultController
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            throw new NotFoundHttpException('User not found');
         }
 
         $user->setDeletedAt(new \DateTimeImmutable());
         $this->em->flush();
 
-        return $this->json(null, 204);
+        return new JsonResponse(null, 204);
     }
 
     #[Route('/{id}/roles', name: 'admin_users_roles', methods: ['POST'])]
@@ -167,7 +168,7 @@ class UserManagementController extends DefaultController
     {
         $user = $this->userRepository->find($id);
         if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+            throw new NotFoundHttpException('User not found');
         }
 
         $user->setRoles($request->roles);

@@ -11,6 +11,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -44,7 +45,7 @@ class AuthController extends DefaultController
         $user = $this->userRepository->findOneBy(['email' => $loginRequest->email]);
 
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $loginRequest->password)) {
-            return $this->json(['error' => 'Invalid credentials'], 401);
+            throw new UnauthorizedHttpException('', 'Invalid credentials');
         }
 
         $token = $this->jwtManager->create($user);

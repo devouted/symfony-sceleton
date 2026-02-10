@@ -2,12 +2,21 @@
 
 **Używaj WYŁĄCZNIE: @redmineDeveloperAgent**
 
+⚠️ **KRYTYCZNE:** Zawsze używaj narzędzi z prefiksem `redmineDeveloperAgent___` (np. `redmineDeveloperAgent___redmine_update_issue`)
+
 ## Workflow DEV
 
+### Pobierz listę zadań
+- Użyj `redmineDeveloperAgent___redmine_search_issues` z `status_id=7` (Backlog)
+- Sortuj: `priority:desc,id:asc`
+- Weź zadanie z najwyższym priorytetem i najniższym ID
+
 ### Podejmij zadanie
-- Status: `Backlog` → `In Progress`
-- Przypisz do siebie (`redmine_assign_issue`)
-- Zmień status (`redmine_transition_issue`)
+- Użyj `redmineDeveloperAgent___redmine_update_issue` aby JEDNOCZEŚNIE:
+  - Przypisać do siebie (`assigned_to_id`)
+  - Zmienić status na In Progress (`status_id=8`)
+  - Dodać komentarz (`notes`)
+- ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmineDeveloperAgent___redmine_get_issue`
 
 ### Praca z Epicami (jeśli zadanie ma rodzica)
 - Jeśli podejmowane zadanie jest **pierwszym aktywnym dzieckiem epica**:
@@ -16,8 +25,10 @@
 - Zmiana statusu epica jest dozwolona wyłącznie w celu odzwierciedlenia faktycznego startu prac
 
 ### Zakończ pracę
-- Status: `In Progress` → `Code Review`
-- Dodaj komentarz z opisem zmian
+- Użyj `redmineDeveloperAgent___redmine_update_issue`:
+  - Zmień status na Code Review (`status_id=9`)
+  - Dodaj komentarz z opisem zmian (`notes`)
+- ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmineDeveloperAgent___redmine_get_issue`
 
 ### Wznów pracę (po QA)
 - Status: `In Progress` (jeśli QA cofnęło)

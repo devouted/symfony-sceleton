@@ -4,6 +4,10 @@
 
 ## Workflow QA
 
+### Pobioerz liste zadań
+- Pobierz liste zadań z statusem Code Review
+- weź to z najwyższym priorytetem i najniżyszym id tasku
+
 ### Podejmij weryfikację
 - Status: `Code Review` → `QA`
 - Przypisz do siebie
@@ -17,6 +21,9 @@
 - Status: `QA` → `In Progress`
 - Dodaj komentarz z opisem problemów
 - Przypisz z powrotem do DEV
+
+### po zakończeniu pracy nad zadaniem
+- zweryfikuj status czy został zmieniony
 
 ## Dozwolone operacje
 

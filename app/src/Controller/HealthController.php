@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Dto\Response\HealthResponse;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,19 +19,11 @@ class HealthController extends DefaultController
     #[OA\Response(
         response: 200,
         description: 'API is healthy',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'status', type: 'string', example: 'ok'),
-                new OA\Property(property: 'timestamp', type: 'integer', example: 1770235649)
-            ]
-        )
+        content: new Model(type: HealthResponse::class)
     )]
     #[OA\Tag(name: 'Health')]
     public function health(): JsonResponse
     {
-        return $this->json([
-            'status' => 'ok',
-            'timestamp' => time()
-        ]);
+        return $this->response(new HealthResponse(timestamp: (new \DateTime())->format(\DateTime::ATOM)));
     }
 }

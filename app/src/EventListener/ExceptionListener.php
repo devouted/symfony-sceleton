@@ -2,14 +2,20 @@
 
 namespace App\EventListener;
 
+use App\Dto\Response\ErrorResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ExceptionListener
 {
+    public function __construct(
+        private readonly SerializerInterface $serializer
+    ) {}
+
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
@@ -21,13 +27,16 @@ class ExceptionListener
             default => 500
         };
 
-        $response = new JsonResponse([
-            'error' => [
-                'code' => $statusCode,
-                'message' => $exception->getMessage(),
-                'type' => $this->getErrorType($statusCode)
-            ]
-        ], $statusCode);
+        $errorResponse = new ErrorResponse(
+            $statusCode,
+            $exception->getMessage(),
+            $this->getErrorType($statusCode)
+        );
+
+        $response = new JsonResponse(
+            json_decode($this->serializer->serialize($errorResponse, 'json'), true),
+            $statusCode
+        );
 
         $event->setResponse($response);
     }
