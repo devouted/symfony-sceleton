@@ -9,6 +9,7 @@ use App\Dto\Response\UserResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -21,10 +22,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserManagementController extends DefaultController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private EntityManagerInterface $em,
-        private UserPasswordHasherInterface $passwordHasher
-    ) {}
+        private readonly UserRepository              $userRepository,
+        private readonly EntityManagerInterface      $em,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    )
+    {
+    }
 
     #[Route('', name: 'admin_users_list', methods: ['GET'])]
     #[OA\Get(
@@ -32,7 +35,14 @@ class UserManagementController extends DefaultController
         summary: 'List all users',
         security: [['bearerAuth' => []]]
     )]
-    #[OA\Response(response: 200, description: 'Users list')]
+    #[OA\Response(
+        response: 200,
+        description: 'Users list',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: UserResponse::class))
+        )
+    )]
     #[OA\Tag(name: 'User Management')]
     public function list(): JsonResponse
     {
@@ -46,7 +56,11 @@ class UserManagementController extends DefaultController
         summary: 'Get user details',
         security: [['bearerAuth' => []]]
     )]
-    #[OA\Response(response: 200, description: 'User details')]
+    #[OA\Response(
+        response: 200,
+        description: 'User details',
+        content: new Model(type: UserResponse::class)
+    )]
     #[OA\Response(response: 404, description: 'User not found')]
     #[OA\Tag(name: 'User Management')]
     public function get(int $id): JsonResponse
@@ -64,7 +78,11 @@ class UserManagementController extends DefaultController
         summary: 'Create new user',
         security: [['bearerAuth' => []]]
     )]
-    #[OA\Response(response: 201, description: 'User created')]
+    #[OA\Response(
+        response: 201,
+        description: 'User created',
+        content: new Model(type: UserResponse::class)
+    )]
     #[OA\Response(response: 400, description: 'Validation error')]
     #[OA\Tag(name: 'User Management')]
     public function create(#[MapRequestPayload] CreateUserRequest $request): JsonResponse
@@ -86,7 +104,11 @@ class UserManagementController extends DefaultController
         summary: 'Update user',
         security: [['bearerAuth' => []]]
     )]
-    #[OA\Response(response: 200, description: 'User updated')]
+    #[OA\Response(
+        response: 200,
+        description: 'User updated',
+        content: new Model(type: UserResponse::class)
+    )]
     #[OA\Response(response: 404, description: 'User not found')]
     #[OA\Tag(name: 'User Management')]
     public function update(int $id, #[MapRequestPayload] UpdateUserRequest $request): JsonResponse
@@ -134,7 +156,11 @@ class UserManagementController extends DefaultController
         summary: 'Assign roles to user',
         security: [['bearerAuth' => []]]
     )]
-    #[OA\Response(response: 200, description: 'Roles assigned')]
+    #[OA\Response(
+        response: 200,
+        description: 'Roles assigned',
+        content: new Model(type: UserResponse::class)
+    )]
     #[OA\Response(response: 404, description: 'User not found')]
     #[OA\Tag(name: 'User Management')]
     public function assignRoles(int $id, #[MapRequestPayload] AssignRolesRequest $request): JsonResponse

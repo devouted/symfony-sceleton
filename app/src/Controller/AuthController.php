@@ -17,10 +17,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class AuthController extends DefaultController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private UserPasswordHasherInterface $passwordHasher,
-        private JWTTokenManagerInterface $jwtManager
-    ) {}
+        private readonly UserRepository              $userRepository,
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly JWTTokenManagerInterface    $jwtManager
+    )
+    {
+    }
 
     #[Route('/auth/login', name: 'auth_login', methods: ['POST'])]
     #[OA\Post(

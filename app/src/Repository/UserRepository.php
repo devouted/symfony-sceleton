@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -17,9 +18,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         parent::__construct($registry, User::class);
     }
 
-    public function findOneBy(array $criteria, ?array $orderBy = null): null|PasswordAuthenticatedUserInterface
+    public function findOneBy(array $criteria, ?array $orderBy = null): null|PasswordAuthenticatedUserInterface|User
     {
         return parent::findOneBy($criteria, $orderBy);
+    }
+    public function find(mixed $id, int|LockMode|null $lockMode = null, ?int $lockVersion = null): null|User
+    {
+        return parent::find($id, $lockMode, $lockVersion);
     }
 
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void

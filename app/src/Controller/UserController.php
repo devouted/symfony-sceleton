@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Response\UserResponse;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,13 +22,7 @@ class UserController extends DefaultController
     #[OA\Response(
         response: 200,
         description: 'User data',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'id', type: 'integer', example: 1),
-                new OA\Property(property: 'email', type: 'string', example: 'test@example.com'),
-                new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'))
-            ]
-        )
+        content: new Model(type: UserResponse::class)
     )]
     #[OA\Response(response: 401, description: 'Unauthorized')]
     #[OA\Tag(name: 'User')]

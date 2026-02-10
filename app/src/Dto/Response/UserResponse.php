@@ -3,23 +3,25 @@
 namespace App\Dto\Response;
 
 use App\Dto\ResponseDtoInterface;
+use App\Entity\User;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[OA\Schema(schema: 'UserResponse')]
-class UserResponse implements ResponseDtoInterface
+readonly class UserResponse implements ResponseDtoInterface
 {
     public function __construct(
         #[OA\Property(example: 1)]
-        public readonly int $id,
+        public int     $id,
         #[OA\Property(example: 'user@example.com')]
-        public readonly string $email,
+        public string  $email,
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'), example: ['ROLE_USER'])]
-        public readonly array $roles,
+        public array   $roles,
         #[OA\Property(example: null, nullable: true)]
-        public readonly ?string $deletedAt
+        public ?string $deletedAt
     ) {}
 
-    public static function fromEntity(\App\Entity\User $user): self
+    public static function fromEntity(User|UserInterface $user): self
     {
         return new self(
             $user->getId(),
