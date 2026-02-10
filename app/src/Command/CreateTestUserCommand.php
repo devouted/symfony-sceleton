@@ -27,7 +27,7 @@ class CreateTestUserCommand extends Command
     {
         $user = new User();
         $user->setEmail('test@example.com');
-        $user->setRoles(['ROLE_USER']);
+        $user->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
         
         $hashedPassword = $this->passwordHasher->hashPassword($user, 'test123');
         $user->setPassword($hashedPassword);
@@ -38,6 +38,7 @@ class CreateTestUserCommand extends Command
         $output->writeln('Test user created successfully!');
         $output->writeln('Email: test@example.com');
         $output->writeln('Password: test123');
+        $output->writeln('Roles: ROLE_USER, ROLE_ADMIN');
 
         return Command::SUCCESS;
     }

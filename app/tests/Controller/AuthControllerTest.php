@@ -80,4 +80,46 @@ class AuthControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(401);
     }
+
+    public function testLoginValidationMissingEmail(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'password' => 'test123'
+        ]));
+
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    public function testLoginValidationInvalidEmailFormat(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'email' => 'notanemail',
+            'password' => 'test123'
+        ]));
+
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    public function testLoginValidationMissingPassword(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'email' => 'test@example.com'
+        ]));
+
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    public function testLoginValidationPasswordTooShort(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'email' => 'test@example.com',
+            'password' => '12345'
+        ]));
+
+        $this->assertResponseStatusCodeSame(422);
+    }
 }
