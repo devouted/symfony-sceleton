@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Dto\Request\AssignRolesRequest;
 use App\Dto\Request\CreateUserRequest;
 use App\Dto\Request\UpdateUserRequest;
+use App\Dto\Response\ErrorResponse;
 use App\Dto\Response\UserResponse;
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -62,7 +63,7 @@ class UserManagementController extends DefaultController
         description: 'User details',
         content: new Model(type: UserResponse::class)
     )]
-    #[OA\Response(response: 404, description: 'User not found')]
+    #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
     public function get(int $id): JsonResponse
     {
@@ -84,7 +85,7 @@ class UserManagementController extends DefaultController
         description: 'User created',
         content: new Model(type: UserResponse::class)
     )]
-    #[OA\Response(response: 400, description: 'Validation error')]
+    #[OA\Response(response: 400, description: 'Validation error', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
     public function create(#[MapRequestPayload] CreateUserRequest $request): JsonResponse
     {
@@ -110,7 +111,7 @@ class UserManagementController extends DefaultController
         description: 'User updated',
         content: new Model(type: UserResponse::class)
     )]
-    #[OA\Response(response: 404, description: 'User not found')]
+    #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
     public function update(int $id, #[MapRequestPayload] UpdateUserRequest $request): JsonResponse
     {
@@ -136,7 +137,7 @@ class UserManagementController extends DefaultController
         security: [['bearerAuth' => []]]
     )]
     #[OA\Response(response: 204, description: 'User deleted')]
-    #[OA\Response(response: 404, description: 'User not found')]
+    #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
     public function delete(int $id): JsonResponse
     {
@@ -162,7 +163,7 @@ class UserManagementController extends DefaultController
         description: 'Roles assigned',
         content: new Model(type: UserResponse::class)
     )]
-    #[OA\Response(response: 404, description: 'User not found')]
+    #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
     public function assignRoles(int $id, #[MapRequestPayload] AssignRolesRequest $request): JsonResponse
     {

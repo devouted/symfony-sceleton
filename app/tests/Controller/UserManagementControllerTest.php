@@ -56,6 +56,26 @@ class UserManagementControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function testGetUserNotFound(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'email' => 'test@example.com',
+            'password' => 'test123'
+        ]));
+        $token = json_decode($client->getResponse()->getContent(), true)['token'];
+
+        $client->request('GET', '/api/admin/users/99999', [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token
+        ]);
+        $this->assertResponseStatusCodeSame(404);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('code', $data);
+        $this->assertArrayHasKey('message', $data);
+        $this->assertArrayHasKey('type', $data);
+        $this->assertEquals(404, $data['code']);
+    }
+
     public function testUpdateUser(): void
     {
         $client = static::createClient();

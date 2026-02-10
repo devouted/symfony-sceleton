@@ -29,6 +29,11 @@ class AuthControllerTest extends WebTestCase
         ]));
 
         $this->assertResponseStatusCodeSame(401);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('code', $data);
+        $this->assertArrayHasKey('message', $data);
+        $this->assertArrayHasKey('type', $data);
+        $this->assertEquals(401, $data['code']);
     }
 
     public function testMeEndpointAuthenticated(): void

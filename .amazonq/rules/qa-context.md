@@ -9,21 +9,27 @@
 - weź to z najwyższym priorytetem i najniżyszym id tasku
 
 ### Podejmij weryfikację
-- Status: `Code Review` → `QA`
-- Przypisz do siebie
-- Zmień status
+- Użyj `redmine_transition_issue` aby zmienić status na QA (`status_id=10`)
+- Przypisz do siebie (`assigned_to_id`)
+- Dodaj komentarz (`notes`)
+- ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmine_get_issue`
 
 ### Zaakceptuj zadanie
-- Status: `QA` → `Done`
-- Dodaj komentarz z potwierdzeniem weryfikacji
+- Użyj `redmine_transition_issue`:
+  - Zmień status na Done (`status_id=11`)
+  - Dodaj komentarz z potwierdzeniem weryfikacji (`notes`)
+- ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmine_get_issue`
 
 ### Odrzuć zadanie
-- Status: `QA` → `In Progress`
-- Dodaj komentarz z opisem problemów
-- Przypisz z powrotem do DEV
+- Użyj `redmine_transition_issue`:
+  - Zmień status na In Progress (`status_id=8`)
+  - Dodaj komentarz z opisem problemów (`notes`)
+- Przypisz z powrotem do DEV (`assigned_to_id=29`)
+- ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmine_get_issue`
 
-### po zakończeniu pracy nad zadaniem
-- zweryfikuj status czy został zmieniony
+### Uruchamianie testów
+- Testy uruchamiaj w kontenerze Docker: `docker exec symfony_php php bin/phpunit tests/Controller/`
+- Nigdy nie uruchamiaj testów bezpośrednio na hoście
 
 ## Dozwolone operacje
 

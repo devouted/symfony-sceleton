@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Request\LoginRequest;
+use App\Dto\Response\ErrorResponse;
 use App\Dto\Response\LoginResponse;
 use App\Dto\Response\UserResponse;
 use App\Repository\UserRepository;
@@ -37,8 +38,8 @@ class AuthController extends DefaultController
         description: 'JWT token and user data',
         content: new Model(type: LoginResponse::class)
     )]
-    #[OA\Response(response: 401, description: 'Invalid credentials')]
-    #[OA\Response(response: 422, description: 'Validation error')]
+    #[OA\Response(response: 401, description: 'Invalid credentials', content: new Model(type: ErrorResponse::class))]
+    #[OA\Response(response: 422, description: 'Validation error', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'Authentication')]
     public function login(#[MapRequestPayload] LoginRequest $loginRequest): JsonResponse
     {
