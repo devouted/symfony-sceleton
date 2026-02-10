@@ -12,8 +12,9 @@
 
 ### Zamknięcie Story
 - Sprawdź czy wszystkie powiązane taski są Done
-- Dodaj komentarz z podsumowaniem
-- Zamknij Story tylko jeśli wszystko zakończone
+  - Dodaj komentarz z podsumowaniem
+  - Zamknij Story tylko jeśli wszystko zakończone
+  - Status Story jeżeli jest `In Progress` to ustaw na `Done`
 
 ### Zarządzanie backlogiem
 - Zmiana priorytetów zadań w Backlogu
