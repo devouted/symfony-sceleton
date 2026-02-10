@@ -4,13 +4,13 @@
 
 ```bash
 # Uruchom środowisko
-docker-compose up -d
+docker compose up -d
 
 # Sprawdź status
-docker-compose ps
+docker compose ps
 
 # Zatrzymaj środowisko
-docker-compose down
+docker compose down
 ```
 
 ## Dostęp
