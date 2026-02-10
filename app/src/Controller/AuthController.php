@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Dto\Request\LoginRequestDto;
+use App\Dto\Request\LoginRequest;
 use App\Dto\Response\LoginResponse;
 use App\Dto\Response\UserResponse;
 use App\Repository\UserRepository;
@@ -30,7 +30,7 @@ class AuthController extends DefaultController
         description: 'User authentication',
         summary: 'Login with email and password'
     )]
-    #[OA\RequestBody(content: new Model(type: LoginRequestDto::class))]
+    #[OA\RequestBody(content: new Model(type: LoginRequest::class))]
     #[OA\Response(
         response: 200,
         description: 'JWT token and user data',
@@ -39,7 +39,7 @@ class AuthController extends DefaultController
     #[OA\Response(response: 401, description: 'Invalid credentials')]
     #[OA\Response(response: 422, description: 'Validation error')]
     #[OA\Tag(name: 'Authentication')]
-    public function login(#[MapRequestPayload] LoginRequestDto $loginRequest): JsonResponse
+    public function login(#[MapRequestPayload] LoginRequest $loginRequest): JsonResponse
     {
         $user = $this->userRepository->findOneBy(['email' => $loginRequest->email]);
 

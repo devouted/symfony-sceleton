@@ -4,7 +4,7 @@ namespace App\Dto\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class LoginRequestDto
+class LoginRequest
 {
     #[Assert\NotBlank]
     #[Assert\Email]
