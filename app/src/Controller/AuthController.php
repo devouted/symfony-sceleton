@@ -32,20 +32,7 @@ class AuthController extends DefaultController
     #[OA\Response(
         response: 200,
         description: 'JWT token and user data',
-        content: new OA\JsonContent(
-            properties: [
-                new OA\Property(property: 'token', type: 'string', example: 'eyJ0eXAiOiJKV1QiLCJhbGc...'),
-                new OA\Property(
-                    property: 'user',
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'email', type: 'string', example: 'test@example.com'),
-                        new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'))
-                    ],
-                    type: 'object'
-                )
-            ]
-        )
+        content: new Model(type: LoginResponse::class)
     )]
     #[OA\Response(response: 401, description: 'Invalid credentials')]
     #[OA\Response(response: 422, description: 'Validation error')]
