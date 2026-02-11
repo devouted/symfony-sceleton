@@ -20,6 +20,11 @@ WORKDIR /var/www/html
 
 RUN groupadd -g ${GROUP_ID} symfony || true \
     && useradd -u ${USER_ID} -g symfony -m symfony || true \
-    && chown -R www-data:www-data /var/www/html
+    && chown -R symfony:symfony /var/www/html
+
+ENV APACHE_RUN_USER=symfony
+ENV APACHE_RUN_GROUP=symfony
+
+USER symfony
 
 EXPOSE 80

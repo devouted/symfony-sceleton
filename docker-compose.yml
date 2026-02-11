@@ -1,5 +1,5 @@
 services:
-  php:
+  apache:
     build: .
     container_name: symfony_php
     ports:

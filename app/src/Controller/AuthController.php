@@ -43,6 +43,7 @@ class AuthController extends DefaultController
     #[OA\Tag(name: 'Authentication')]
     public function login(#[MapRequestPayload] LoginRequest $loginRequest): JsonResponse
     {
+dump($loginRequest);
         $user = $this->userRepository->findOneBy(['email' => $loginRequest->email]);
 
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $loginRequest->password)) {
