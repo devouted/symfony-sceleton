@@ -2,6 +2,8 @@
 
 **Używaj WYŁĄCZNIE: @redmineQAAgent**
 
+⚠️ **NIGDY nie używaj narzędzi QA do zmiany statusów zadań DEV (Backlog → In Progress → Code Review)**
+
 ## Workflow QA
 
 ### Pobioerz liste zadań

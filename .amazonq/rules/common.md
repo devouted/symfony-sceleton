@@ -6,6 +6,15 @@
 - Upewnij się, że używasz właściwego serwera MCP dla danego kontekstu
 - Nigdy nie generuj komend shell/curl do komunikacji z Redmine — używaj wyłącznie MCP tools
 
+## KRYTYCZNE: Separacja ról i workflow
+
+- ❌ PM NIE MOŻE zmieniać statusów zadań DEV (Backlog → In Progress → Code Review)
+- ❌ QA NIE MOŻE zmieniać statusów zadań DEV (Backlog → In Progress → Code Review)
+- ❌ DEV NIE MOŻE zamykać zadań (Done) - to wyłącznie rola QA
+- ❌ PM NIE MOŻE zamykać tasków (Done) - to wyłącznie rola QA
+- ⚠️ Jeśli narzędzia danego kontekstu nie działają - użyj dostępnych narzędzi z innego kontekstu TYLKO jeśli workflow na to pozwala
+- ✅ Każda rola używa WYŁĄCZNIE swoich narzędzi MCP dla swoich operacji
+
 ## Dostępne serwery MCP
 
 1. **@redminePMAgent** - dla kontekstu Product Managera

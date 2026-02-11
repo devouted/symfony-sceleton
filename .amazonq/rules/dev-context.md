@@ -4,6 +4,8 @@
 
 ⚠️ **KRYTYCZNE:** Zawsze używaj narzędzi z prefiksem `redmineDeveloperAgent___` (np. `redmineDeveloperAgent___redmine_update_issue`)
 
+⚠️ **NIGDY nie używaj narzędzi PM ani QA do zmiany statusów zadań DEV**
+
 ## Workflow DEV
 
 ### Pobierz listę zadań

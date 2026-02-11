@@ -41,6 +41,7 @@
 - ❌ Ingerowanie w realizację techniczną tasków
 - ❌ Zamykanie tasków (Done)
 - ❌ Omijanie workflow (np. ręczne przesuwanie Story „bo wszystko już zrobione" bez weryfikacji)
+- ❌ Używanie narzędzi PM do zmiany statusów zadań DEV (Backlog → In Progress → Code Review)
 
 ## Odpowiedzialność PM
 
