@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
