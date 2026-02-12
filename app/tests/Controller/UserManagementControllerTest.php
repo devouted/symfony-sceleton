@@ -2,38 +2,30 @@
 
 namespace App\Tests\Controller;
 
+use App\Tests\Traits\AuthenticatedApiTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserManagementControllerTest extends WebTestCase
 {
+    use AuthenticatedApiTestTrait;
+
+    private $client;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+    }
     public function testListUsers(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('GET', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token
-        ]);
+        $token = $this->loginAsAdmin();
+        $this->client->request('GET', '/api/admin/users', [], [], $this->getAuthHeaders($token));
         $this->assertResponseIsSuccessful();
     }
 
     public function testCreateUser(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'newuser' . time() . '@example.com',
             'password' => 'password123',
             'roles' => ['ROLE_USER']
@@ -43,52 +35,23 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testGetUser(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('GET', '/api/admin/users/1', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token
-        ]);
+        $token = $this->loginAsAdmin();
+        $this->client->request('GET', '/api/admin/users/1', [], [], $this->getAuthHeaders($token));
         $this->assertResponseIsSuccessful();
     }
 
     public function testGetUserNotFound(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('GET', '/api/admin/users/99999', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token
-        ]);
+        $token = $this->loginAsAdmin();
+        $this->client->request('GET', '/api/admin/users/99999', [], [], $this->getAuthHeaders($token));
         $this->assertResponseStatusCodeSame(404);
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('code', $data);
-        $this->assertArrayHasKey('message', $data);
-        $this->assertArrayHasKey('type', $data);
-        $this->assertEquals(404, $data['code']);
+        $this->assertErrorResponse(404);
     }
 
     public function testUpdateUser(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('PUT', '/api/admin/users/1', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('PUT', '/api/admin/users/1', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'roles' => ['ROLE_USER', 'ROLE_ADMIN']
         ]));
         $this->assertResponseIsSuccessful();
@@ -96,17 +59,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testAssignRoles(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users/1/roles', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users/1/roles', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'roles' => ['ROLE_USER', 'ROLE_ADMIN']
         ]));
         $this->assertResponseIsSuccessful();
@@ -114,17 +68,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testCreateUserValidationInvalidEmail(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'notanemail',
             'password' => 'password123',
             'roles' => ['ROLE_USER']
@@ -134,17 +79,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testCreateUserValidationPasswordTooShort(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'newuser@example.com',
             'password' => '12345',
             'roles' => ['ROLE_USER']
@@ -154,17 +90,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testCreateUserValidationInvalidRole(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'newuser@example.com',
             'password' => 'password123',
             'roles' => ['INVALID_ROLE']
@@ -174,17 +101,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testUpdateUserNotFound(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('PUT', '/api/admin/users/99999', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('PUT', '/api/admin/users/99999', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'roles' => ['ROLE_USER']
         ]));
         $this->assertResponseStatusCodeSame(404);
@@ -192,17 +110,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testUpdateUserValidationInvalidEmail(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('PUT', '/api/admin/users/1', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('PUT', '/api/admin/users/1', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'notanemail'
         ]));
         $this->assertResponseStatusCodeSame(422);
@@ -210,57 +119,29 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testDeleteUser(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'todelete' . time() . '@example.com',
             'password' => 'password123',
             'roles' => ['ROLE_USER']
         ]));
-        $userId = json_decode($client->getResponse()->getContent(), true)['id'];
+        $userId = $this->getJsonResponse()['id'];
 
-        $client->request('DELETE', '/api/admin/users/' . $userId, [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token
-        ]);
+        $this->client->request('DELETE', '/api/admin/users/' . $userId, [], [], $this->getAuthHeaders($token));
         $this->assertResponseStatusCodeSame(204);
     }
 
     public function testDeleteUserNotFound(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('DELETE', '/api/admin/users/99999', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token
-        ]);
+        $token = $this->loginAsAdmin();
+        $this->client->request('DELETE', '/api/admin/users/99999', [], [], $this->getAuthHeaders($token));
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testAssignRolesNotFound(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users/99999/roles', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users/99999/roles', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'roles' => ['ROLE_USER']
         ]));
         $this->assertResponseStatusCodeSame(404);
@@ -268,17 +149,8 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testAssignRolesValidationInvalidRole(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        $token = json_decode($client->getResponse()->getContent(), true)['token'];
-
-        $client->request('POST', '/api/admin/users/1/roles', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users/1/roles', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'roles' => ['INVALID_ROLE']
         ]));
         $this->assertResponseStatusCodeSame(422);
@@ -286,25 +158,22 @@ class UserManagementControllerTest extends WebTestCase
 
     public function testAdminEndpointsForbiddenForNonAdmin(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/admin/users', [], [], [
-            'CONTENT_TYPE' => 'application/json'
-        ], json_encode([
-            'email' => 'regularuser' . time() . '@example.com',
+        $adminToken = $this->loginAsAdmin();
+        $email = 'regularuser' . time() . '@example.com';
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($adminToken), ['CONTENT_TYPE' => 'application/json']), json_encode([
+            'email' => $email,
             'password' => 'password123',
             'roles' => ['ROLE_USER']
         ]));
-        $userId = json_decode($client->getResponse()->getContent(), true)['id'];
+        $this->assertResponseStatusCodeSame(201);
 
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'regularuser' . ($userId) . '@example.com',
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'email' => $email,
             'password' => 'password123'
         ]));
-        $regularToken = json_decode($client->getResponse()->getContent(), true)['token'];
+        $regularToken = $this->getJsonResponse()['token'];
 
-        $client->request('GET', '/api/admin/users', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $regularToken
-        ]);
+        $this->client->request('GET', '/api/admin/users', [], [], $this->getAuthHeaders($regularToken));
         $this->assertResponseStatusCodeSame(403);
     }
 }

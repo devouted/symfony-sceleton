@@ -2,61 +2,51 @@
 
 namespace App\Tests\Controller;
 
+use App\Tests\Traits\AuthenticatedApiTestTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AuthControllerTest extends WebTestCase
 {
+    use AuthenticatedApiTestTrait;
+
+    private $client;
+
+    protected function setUp(): void
+    {
+        $this->client = static::createClient();
+    }
     public function testLoginSuccess(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'test@example.com',
             'password' => 'test123'
         ]));
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->getJsonResponse();
         $this->assertArrayHasKey('token', $data);
         $this->assertArrayHasKey('user', $data);
     }
 
     public function testLoginInvalidCredentials(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'test@example.com',
             'password' => 'wrongpassword'
         ]));
 
         $this->assertResponseStatusCodeSame(401);
-        $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('code', $data);
-        $this->assertArrayHasKey('message', $data);
-        $this->assertArrayHasKey('type', $data);
-        $this->assertEquals(401, $data['code']);
+        $this->assertErrorResponse(401);
     }
 
     public function testMeEndpointAuthenticated(): void
     {
-        $client = static::createClient();
-        
-        // Login first
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
-            'email' => 'test@example.com',
-            'password' => 'test123'
-        ]));
-        
-        $loginData = json_decode($client->getResponse()->getContent(), true);
-        $token = $loginData['token'];
+        $token = $this->loginAsAdmin();
 
-        // Access /me with token
-        $client->request('GET', '/api/me', [], [], [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-            'CONTENT_TYPE' => 'application/json'
-        ]);
+        $this->client->request('GET', '/api/me', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']));
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($client->getResponse()->getContent(), true);
+        $data = $this->getJsonResponse();
         $this->assertArrayHasKey('id', $data);
         $this->assertArrayHasKey('email', $data);
         $this->assertArrayHasKey('roles', $data);
@@ -64,62 +54,50 @@ class AuthControllerTest extends WebTestCase
 
     public function testMeEndpointUnauthorized(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/api/me');
-
+        $this->client->request('GET', '/api/me');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testMeEndpointInvalidToken(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/api/me', [], [], [
+        $this->client->request('GET', '/api/me', [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer invalid.token.here',
             'CONTENT_TYPE' => 'application/json'
         ]);
-
         $this->assertResponseStatusCodeSame(401);
     }
 
     public function testLoginValidationMissingEmail(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'password' => 'test123'
         ]));
-
         $this->assertResponseStatusCodeSame(422);
     }
 
     public function testLoginValidationInvalidEmailFormat(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'notanemail',
             'password' => 'test123'
         ]));
-
         $this->assertResponseStatusCodeSame(422);
     }
 
     public function testLoginValidationMissingPassword(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'test@example.com'
         ]));
-
         $this->assertResponseStatusCodeSame(422);
     }
 
     public function testLoginValidationPasswordTooShort(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+        $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'test@example.com',
             'password' => '12345'
         ]));
-
         $this->assertResponseStatusCodeSame(422);
     }
 }
