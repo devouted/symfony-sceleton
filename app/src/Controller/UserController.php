@@ -16,8 +16,7 @@ class UserController extends DefaultController
     #[OA\Get(
         path: '/api/me',
         description: 'Get current user information',
-        summary: 'Get authenticated user data',
-        security: [['bearerAuth' => []]]
+        summary: 'Get authenticated user data'
     )]
     #[OA\Response(
         response: 200,

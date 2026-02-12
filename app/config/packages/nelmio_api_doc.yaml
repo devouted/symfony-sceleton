@@ -4,6 +4,8 @@ nelmio_api_doc:
             title: Symfony API CRM
             description: API documentation for Symfony CRM
             version: 1.0.0
+        security:
+            - bearerAuth: []
         components:
             securitySchemes:
                 bearerAuth:

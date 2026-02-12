@@ -14,7 +14,8 @@ class HealthController extends DefaultController
     #[OA\Get(
         path: '/api/health',
         description: 'Health check endpoint',
-        summary: 'Check API health status'
+        summary: 'Check API health status',
+        security: []
     )]
     #[OA\Response(
         response: 200,

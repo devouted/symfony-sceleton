@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -34,8 +35,7 @@ class UserManagementController extends DefaultController
     #[Route('', name: 'admin_users_list', methods: ['GET'])]
     #[OA\Get(
         path: '/api/admin/users',
-        summary: 'List all users',
-        security: [['bearerAuth' => []]]
+        summary: 'List all users'
     )]
     #[OA\Response(
         response: 200,
@@ -52,12 +52,11 @@ class UserManagementController extends DefaultController
         return $this->json(array_map(fn($u) => UserResponse::fromEntity($u), $users));
     }
 
-    #[Route('/{id}', name: 'admin_users_get', methods: ['GET'])]
     #[OA\Get(
         path: '/api/admin/users/{id}',
-        summary: 'Get user details',
-        security: [['bearerAuth' => []]]
+        summary: 'Get user details'
     )]
+    #[Route('/{id}', name: 'admin_users_get', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[OA\Response(
         response: 200,
         description: 'User details',
@@ -65,20 +64,15 @@ class UserManagementController extends DefaultController
     )]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function get(int $id): JsonResponse
+    public function get(#[MapEntity] User $user): JsonResponse
     {
-        $user = $this->userRepository->find($id);
-        if (!$user) {
-            throw new NotFoundHttpException('User not found');
-        }
         return $this->response(UserResponse::fromEntity($user));
     }
 
     #[Route('', name: 'admin_users_create', methods: ['POST'])]
     #[OA\Post(
         path: '/api/admin/users',
-        summary: 'Create new user',
-        security: [['bearerAuth' => []]]
+        summary: 'Create new user'
     )]
     #[OA\Response(
         response: 201,
@@ -100,11 +94,10 @@ class UserManagementController extends DefaultController
         return $this->response(UserResponse::fromEntity($user), 201);
     }
 
-    #[Route('/{id}', name: 'admin_users_update', methods: ['PUT'])]
+    #[Route('/{id}', name: 'admin_users_update', requirements: ['id' => '\d+'], methods: ['PUT'])]
     #[OA\Put(
         path: '/api/admin/users/{id}',
-        summary: 'Update user',
-        security: [['bearerAuth' => []]]
+        summary: 'Update user'
     )]
     #[OA\Response(
         response: 200,
@@ -113,13 +106,8 @@ class UserManagementController extends DefaultController
     )]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function update(int $id, #[MapRequestPayload] UpdateUserRequest $request): JsonResponse
+    public function update(#[MapEntity] User $user, #[MapRequestPayload] UpdateUserRequest $request): JsonResponse
     {
-        $user = $this->userRepository->find($id);
-        if (!$user) {
-            throw new NotFoundHttpException('User not found');
-        }
-
         if ($request->email) $user->setEmail($request->email);
         if ($request->roles) $user->setRoles($request->roles);
         if ($request->password) {
@@ -130,33 +118,26 @@ class UserManagementController extends DefaultController
         return $this->response(UserResponse::fromEntity($user));
     }
 
-    #[Route('/{id}', name: 'admin_users_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'admin_users_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
     #[OA\Delete(
         path: '/api/admin/users/{id}',
-        summary: 'Soft delete user',
-        security: [['bearerAuth' => []]]
+        summary: 'Soft delete user'
     )]
     #[OA\Response(response: 204, description: 'User deleted')]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function delete(int $id): JsonResponse
+    public function delete(#[MapEntity] User $user): JsonResponse
     {
-        $user = $this->userRepository->find($id);
-        if (!$user) {
-            throw new NotFoundHttpException('User not found');
-        }
-
         $user->setDeletedAt(new \DateTimeImmutable());
         $this->em->flush();
 
         return new JsonResponse(null, 204);
     }
 
-    #[Route('/{id}/roles', name: 'admin_users_roles', methods: ['POST'])]
+    #[Route('/{id}/roles', name: 'admin_users_roles', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[OA\Post(
         path: '/api/admin/users/{id}/roles',
-        summary: 'Assign roles to user',
-        security: [['bearerAuth' => []]]
+        summary: 'Assign roles to user'
     )]
     #[OA\Response(
         response: 200,
@@ -165,13 +146,8 @@ class UserManagementController extends DefaultController
     )]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function assignRoles(int $id, #[MapRequestPayload] AssignRolesRequest $request): JsonResponse
+    public function assignRoles(#[MapEntity] User $user, #[MapRequestPayload] AssignRolesRequest $request): JsonResponse
     {
-        $user = $this->userRepository->find($id);
-        if (!$user) {
-            throw new NotFoundHttpException('User not found');
-        }
-
         $user->setRoles($request->roles);
         $this->em->flush();
 

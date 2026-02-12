@@ -30,7 +30,8 @@ class AuthController extends DefaultController
     #[OA\Post(
         path: '/api/auth/login',
         description: 'User authentication',
-        summary: 'Login with email and password'
+        summary: 'Login with email and password',
+        security: []
     )]
     #[OA\RequestBody(content: new Model(type: LoginRequest::class))]
     #[OA\Response(
