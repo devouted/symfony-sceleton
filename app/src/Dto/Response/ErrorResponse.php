@@ -14,6 +14,8 @@ readonly class ErrorResponse implements ResponseDtoInterface
         #[OA\Property(example: 'Resource not found')]
         public string $message,
         #[OA\Property(example: 'NotFoundError')]
-        public string $type
+        public string $type,
+        #[OA\Property(example: [])]
+        public array $details = []
     ) {}
 }

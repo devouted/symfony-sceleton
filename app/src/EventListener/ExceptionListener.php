@@ -11,10 +11,10 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class ExceptionListener
+readonly class ExceptionListener
 {
     public function __construct(
-        private readonly SerializerInterface $serializer
+        private SerializerInterface $serializer
     ) {}
 
     /**
@@ -34,7 +34,7 @@ class ExceptionListener
         $errorResponse = new ErrorResponse(
             $statusCode,
             $exception->getMessage(),
-            $this->getErrorType($statusCode)
+            $this->getErrorType($statusCode),
         );
 
         $response = new JsonResponse(
