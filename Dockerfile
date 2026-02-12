@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql zip opcache \
+    libicu-dev \
+    && docker-php-ext-install pdo pdo_mysql zip opcache intl \
     && pecl install redis \
     && docker-php-ext-enable redis
 
