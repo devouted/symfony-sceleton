@@ -7,7 +7,25 @@ services:
       - ./app:/var/www/html
       - ./config/apache.conf:/etc/apache2/sites-available/000-default.conf
     networks:
-      - symfony
+      symfony:
+        aliases:
+          - api.localhost
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      symfony:
+        aliases:
+          - app.localhost
+    environment:
+      - VITE_API_URL=http://localhost
+    depends_on:
+      - apache
 
   mysql:
     image: mariadb:11
@@ -32,7 +50,6 @@ services:
 
 networks:
   symfony:
-    driver: bridge
 
 volumes:
   mysql_data:
