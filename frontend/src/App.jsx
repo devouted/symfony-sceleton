@@ -6,6 +6,7 @@ import Users from "./pages/Users";
 import UserNew from "./pages/UserNew";
 import UserEdit from "./pages/UserEdit";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 function App() {
 	const { isAuthenticated } = useAuth();
@@ -19,19 +20,19 @@ function App() {
 				/>
 				<Route 
 					path="/dashboard" 
-					element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
+					element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} 
 				/>
 				<Route 
 					path="/users" 
-					element={<ProtectedRoute><Users /></ProtectedRoute>} 
+					element={<ProtectedRoute><Layout><Users /></Layout></ProtectedRoute>} 
 				/>
 				<Route 
 					path="/users/new" 
-					element={<ProtectedRoute><UserNew /></ProtectedRoute>} 
+					element={<ProtectedRoute><Layout><UserNew /></Layout></ProtectedRoute>} 
 				/>
 				<Route 
 					path="/users/:id/edit" 
-					element={<ProtectedRoute><UserEdit /></ProtectedRoute>} 
+					element={<ProtectedRoute><Layout><UserEdit /></Layout></ProtectedRoute>} 
 				/>
 				<Route path="/" element={<Navigate to="/dashboard" replace />} />
 			</Routes>
