@@ -27,7 +27,7 @@ services:
         aliases:
           - app.localhost
     environment:
-      - VITE_API_URL=http://localhost
+      - VITE_API_URL=http://api.localhost/api
     depends_on:
       - apache
 
