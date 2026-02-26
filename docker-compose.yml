@@ -1,6 +1,8 @@
 services:
   apache:
-    build: .
+    build:
+      context: .
+      dockerfile: config/Dockerfile.apache
     ports:
       - "80:80"
     volumes:
@@ -12,7 +14,9 @@ services:
           - api.localhost
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: ../config/Dockerfile.frontend
     ports:
       - "5173:5173"
     volumes:

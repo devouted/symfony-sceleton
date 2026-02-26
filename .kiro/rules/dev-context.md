@@ -14,6 +14,10 @@
 - Weź zadanie z najwyższym priorytetem i najniższym ID
 
 ### Podejmij zadanie
+- **PRZED** podjęciem zadania:
+  - Sprawdź czy zadanie ma rodzica (`parent` w odpowiedzi)
+  - Jeśli ma rodzica (epic), pobierz jego status
+  - Jeśli epic jest w `Backlog` → ustaw epic na `In Progress` (`status_id=8`)
 - Użyj `redmineDeveloperAgent___redmine_update_issue` aby JEDNOCZEŚNIE:
   - Przypisać do siebie (`assigned_to_id`)
   - Zmienić status na In Progress (`status_id=8`)
@@ -21,9 +25,11 @@
 - ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmineDeveloperAgent___redmine_get_issue`
 
 ### Praca z Epicami (jeśli zadanie ma rodzica)
-- Jeśli podejmowane zadanie jest **pierwszym aktywnym dzieckiem epica**:
-    - sprawdź status epica
-    - jeśli epic = `Backlog` → ustaw `In Progress`
+- **PRZY PODEJMOWANIU PIERWSZEGO ZADANIA Z EPICA:**
+    - Sprawdź status epica
+    - Jeśli epic = `Backlog` → ustaw `In Progress` (`status_id=8`)
+    - Dodaj komentarz informujący o rozpoczęciu prac
+- Epic powinien przejść do `In Progress` gdy rozpoczyna się praca nad **pierwszym** jego zadaniem potomnym
 - Zmiana statusu epica jest dozwolona wyłącznie w celu odzwierciedlenia faktycznego startu prac
 
 ### Zakończ pracę
