@@ -11,9 +11,4 @@ enum UserRole: string
     {
         return array_column(self::cases(), 'value');
     }
-
-    public static function isValid(string $role): bool
-    {
-        return in_array($role, self::getValues(), true);
-    }
 }
