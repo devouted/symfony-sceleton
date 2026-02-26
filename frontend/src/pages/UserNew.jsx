@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { Button, Input, Card } from "../components/ui";
 
 const AVAILABLE_ROLES = [
 	{ value: "ROLE_USER", label: "User" },
@@ -55,80 +56,64 @@ export default function UserNew() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50 p-8">
-			<div className="max-w-2xl mx-auto">
-				<h1 className="text-3xl font-bold text-gray-900 mb-6">Nowy użytkownik</h1>
+		<div>
+			<h1 className="text-3xl font-bold mb-6">Nowy użytkownik</h1>
 
-				{error && (
-					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-						{error}
-					</div>
-				)}
+			{error && (
+				<div className="alert alert-error mb-4">
+					<span>{error}</span>
+				</div>
+			)}
 
-				<form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-6">
-					<div className="mb-4">
-						<label className="block text-gray-700 mb-2">Email</label>
-						<input
-							type="email"
-							value={formData.email}
-							onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-							className={`w-full border rounded px-3 py-2 ${validationErrors.email ? 'border-red-500' : 'border-gray-300'}`}
-							required
-						/>
-						{validationErrors.email && (
-							<p className="text-red-500 text-sm mt-1">{validationErrors.email}</p>
-						)}
-					</div>
+			<Card>
+				<form onSubmit={handleSubmit} className="space-y-4">
+					<Input
+						type="email"
+						label="Email"
+						value={formData.email}
+						onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+						error={validationErrors.email}
+						required
+					/>
 
-					<div className="mb-4">
-						<label className="block text-gray-700 mb-2">Hasło</label>
-						<input
-							type="password"
-							value={formData.password}
-							onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-							className={`w-full border rounded px-3 py-2 ${validationErrors.password ? 'border-red-500' : 'border-gray-300'}`}
-							required
-						/>
-						{validationErrors.password && (
-							<p className="text-red-500 text-sm mt-1">{validationErrors.password}</p>
-						)}
-					</div>
+					<Input
+						type="password"
+						label="Hasło"
+						value={formData.password}
+						onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+						error={validationErrors.password}
+						required
+					/>
 
-					<div className="mb-6">
-						<label className="block text-gray-700 mb-2">Role</label>
+					<div className="form-control">
+						<label className="label">
+							<span className="label-text">Role</span>
+						</label>
 						<div className="space-y-2">
 							{AVAILABLE_ROLES.map(role => (
-								<label key={role.value} className="flex items-center">
+								<label key={role.value} className="label cursor-pointer justify-start gap-2">
 									<input
 										type="checkbox"
 										checked={formData.roles.includes(role.value)}
 										onChange={() => toggleRole(role.value)}
-										className="mr-2"
+										className="checkbox"
 									/>
-									<span className="text-gray-700">{role.label}</span>
+									<span className="label-text">{role.label}</span>
 								</label>
 							))}
 						</div>
 					</div>
 
 					<div className="flex gap-4">
-						<button
-							type="submit"
-							disabled={loading}
-							className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
-						>
+						<Button type="submit" variant="primary" disabled={loading}>
 							{loading ? "Zapisywanie..." : "Zapisz"}
-						</button>
-						<button
-							type="button"
-							onClick={() => navigate("/users")}
-							className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-						>
+						</Button>
+						<Button type="button" variant="ghost" onClick={() => navigate("/users")}>
 							Anuluj
-						</button>
+						</Button>
 					</div>
 				</form>
-			</div>
+			</Card>
 		</div>
 	);
 }

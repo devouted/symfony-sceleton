@@ -1,19 +1,23 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
 // Base
-@use 'base/variables';
-@use 'base/reset';
-@use 'base/typography';
+@import 'base/variables';
+@import 'base/reset';
+@import 'base/typography';
 
 // Layout
-@use 'layout/header';
-@use 'layout/nav';
-@use 'layout/main';
+@import 'layout/header';
+@import 'layout/nav';
+@import 'layout/main';
 
 // Components
-@use 'components/button';
-@use 'components/input';
-@use 'components/card';
-@use 'components/modal';
+@import 'components/button';
+@import 'components/input';
+@import 'components/card';
+@import 'components/modal';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// Pages
+@import 'pages/login';
+@import 'pages/users';
+@import 'pages/user-form';

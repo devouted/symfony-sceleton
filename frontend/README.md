@@ -15,6 +15,16 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
+## Architektura frontendu
+
+📖 **[Pełna dokumentacja architektury](./FRONTEND_ARCHITECTURE.md)**
+
+Projekt używa:
+- **React 19** + **Vite 7**
+- **DaisyUI** - system designu
+- **Tailwind CSS** - utility classes
+- **SCSS** - customowe style
+
 ## Struktura projektu
 
 ```
@@ -37,6 +47,9 @@ frontend/src/
 │   │   ├── _header.scss      # Style dla Header
 │   │   ├── _nav.scss         # Style dla nawigacji
 │   │   └── _main.scss        # Style dla głównego kontenera
+│   ├── pages/
+│   │   ├── _login.scss       # Style dla Login
+│   │   └── _users.scss       # Style dla Users
 │   └── main.scss             # Import wszystkich stylów
 ├── pages/               # Strony (tylko kompozycja)
 ├── api/                 # Axios config
@@ -50,3 +63,15 @@ frontend/src/
 - Tailwind utilities dla szybkich modyfikacji
 - Komponenty UI w `components/ui/` są reużywalne
 
+### Szybki start
+
+```bash
+# Development
+npm run dev
+
+# Build
+npm run build
+
+# Lint
+npm run lint
+```
