@@ -12,4 +12,11 @@ export default defineConfig({
 			clientPort: 5173,
 		},
 	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				silenceDeprecations: ['import'],
+			},
+		},
+	},
 });
