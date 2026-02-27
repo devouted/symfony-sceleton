@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Button } from "../ui";
 
 export default function Header() {
 	const navigate = useNavigate();
@@ -12,14 +11,17 @@ export default function Header() {
 	};
 
 	return (
-		<header className="navbar bg-neutral text-neutral-content shadow-md">
+		<header className="navbar bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg">
 			<div className="flex-1">
-				<h1 className="text-xl font-medium">CRM Admin Panel</h1>
+				<h1 className="text-2xl font-bold">CRM Admin Panel</h1>
 			</div>
 			<div className="flex-none">
-				<Button variant="error" size="sm" onClick={handleLogout}>
+				<button 
+					onClick={handleLogout}
+					className="btn btn-sm bg-white/20 hover:bg-white/30 text-white border-white/40 hover:border-white/60"
+				>
 					Wyloguj
-				</Button>
+				</button>
 			</div>
 		</header>
 	);
