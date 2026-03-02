@@ -7,9 +7,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class AssignRolesRequest
 {
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'user.roles.required')]
     #[Assert\All([
-        new Assert\Choice(callback: [UserRole::class, 'getValues'])
+        new Assert\Choice(callback: [UserRole::class, 'getValues'], message: 'user.roles.invalid')
     ])]
     public array $roles;
 }

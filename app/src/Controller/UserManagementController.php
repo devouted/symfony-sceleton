@@ -64,7 +64,7 @@ class UserManagementController extends DefaultController
     )]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function get(#[MapEntity(message: 'User not found')] User $user): JsonResponse
+    public function get(#[MapEntity(message: 'error.user_not_found')] User $user): JsonResponse
     {
         return $this->response(UserResponse::fromEntity($user));
     }
@@ -106,7 +106,7 @@ class UserManagementController extends DefaultController
     )]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function update(#[MapEntity(message: 'User not found')] User $user, #[MapRequestPayload] UpdateUserRequest $request): JsonResponse
+    public function update(#[MapEntity(message: 'error.user_not_found')] User $user, #[MapRequestPayload] UpdateUserRequest $request): JsonResponse
     {
         if ($request->email) $user->setEmail($request->email);
         if ($request->roles) $user->setRoles($request->roles);
@@ -126,7 +126,7 @@ class UserManagementController extends DefaultController
     #[OA\Response(response: 204, description: 'User deleted')]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function delete(#[MapEntity(message: 'User not found')] User $user): JsonResponse
+    public function delete(#[MapEntity(message: 'error.user_not_found')] User $user): JsonResponse
     {
         $user->setDeletedAt(new \DateTimeImmutable());
         $this->em->flush();
@@ -146,7 +146,7 @@ class UserManagementController extends DefaultController
     )]
     #[OA\Response(response: 404, description: 'User not found', content: new Model(type: ErrorResponse::class))]
     #[OA\Tag(name: 'User Management')]
-    public function assignRoles(#[MapEntity(message: 'User not found')] User $user, #[MapRequestPayload] AssignRolesRequest $request): JsonResponse
+    public function assignRoles(#[MapEntity(message: 'error.user_not_found')] User $user, #[MapRequestPayload] AssignRolesRequest $request): JsonResponse
     {
         $user->setRoles($request->roles);
         $this->em->flush();

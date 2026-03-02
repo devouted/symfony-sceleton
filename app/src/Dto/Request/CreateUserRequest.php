@@ -7,21 +7,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateUserRequest
 {
-    #[Assert\NotBlank]
-    #[Assert\Email]
+    #[Assert\NotBlank(message: 'user.email.required')]
+    #[Assert\Email(message: 'user.email.invalid')]
     public string $email;
 
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 8)]
+    #[Assert\NotBlank(message: 'user.password.required')]
+    #[Assert\Length(min: 8, minMessage: 'user.password.too_short')]
     #[Assert\Regex(
         pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/',
-        message: 'Hasło musi zawierać minimum 8 znaków, w tym: wielką literę, małą literę, cyfrę i znak specjalny (@$!%*?&#)'
+        message: 'user.password.weak'
     )]
     public string $password;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'user.roles.required')]
     #[Assert\All([
-        new Assert\Choice(callback: [UserRole::class, 'getValues'])
+        new Assert\Choice(callback: [UserRole::class, 'getValues'], message: 'user.roles.invalid')
     ])]
     public array $roles = ['ROLE_USER'];
 }

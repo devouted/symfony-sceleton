@@ -15,13 +15,15 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AuthController extends DefaultController
 {
     public function __construct(
         private readonly UserRepository              $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
-        private readonly JWTTokenManagerInterface    $jwtManager
+        private readonly JWTTokenManagerInterface    $jwtManager,
+        private readonly TranslatorInterface         $translator
     )
     {
     }
@@ -47,7 +49,7 @@ class AuthController extends DefaultController
         $user = $this->userRepository->findOneBy(['email' => $loginRequest->email]);
 
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $loginRequest->password)) {
-            throw new UnauthorizedHttpException('', 'Invalid credentials');
+            throw new UnauthorizedHttpException('', $this->translator->trans('user.invalid_credentials', [], 'validators'));
         }
 
         $token = $this->jwtManager->create($user);
