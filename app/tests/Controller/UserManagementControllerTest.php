@@ -27,7 +27,7 @@ class UserManagementControllerTest extends WebTestCase
         $token = $this->loginAsAdmin();
         $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'newuser' . time() . '@example.com',
-            'password' => 'password123',
+            'password' => 'Test@1234',
             'roles' => ['ROLE_USER']
         ]));
         $this->assertResponseStatusCodeSame(201);
@@ -88,6 +88,17 @@ class UserManagementControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(422);
     }
 
+    public function testCreateUserValidationWeakPassword(): void
+    {
+        $token = $this->loginAsAdmin();
+        $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
+            'email' => 'newuser@example.com',
+            'password' => 'password123',
+            'roles' => ['ROLE_USER']
+        ]));
+        $this->assertResponseStatusCodeSame(422);
+    }
+
     public function testCreateUserValidationInvalidRole(): void
     {
         $token = $this->loginAsAdmin();
@@ -122,7 +133,7 @@ class UserManagementControllerTest extends WebTestCase
         $token = $this->loginAsAdmin();
         $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => 'todelete' . time() . '@example.com',
-            'password' => 'password123',
+            'password' => 'Test@1234',
             'roles' => ['ROLE_USER']
         ]));
         $userId = $this->getJsonResponse()['id'];
@@ -162,14 +173,14 @@ class UserManagementControllerTest extends WebTestCase
         $email = 'regularuser' . time() . '@example.com';
         $this->client->request('POST', '/api/admin/users', [], [], array_merge($this->getAuthHeaders($adminToken), ['CONTENT_TYPE' => 'application/json']), json_encode([
             'email' => $email,
-            'password' => 'password123',
+            'password' => 'Test@1234',
             'roles' => ['ROLE_USER']
         ]));
         $this->assertResponseStatusCodeSame(201);
 
         $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => $email,
-            'password' => 'password123'
+            'password' => 'Test@1234'
         ]));
         $regularToken = $this->getJsonResponse()['token'];
 

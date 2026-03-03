@@ -4,18 +4,21 @@ namespace App\Controller;
 
 use App\Dto\Response\ErrorResponse;
 use App\Dto\Response\LocalesResponse;
+use App\Dto\Response\RolesResponse;
 use App\Dto\Response\TranslationsResponse;
+use App\Enum\UserLocale;
+use App\Enum\UserRole;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/dictionaries')]
 class DictionaryController extends DefaultController
 {
-    private const AVAILABLE_LOCALES = ['en', 'pl'];
     private const DOMAINS = ['messages', 'validators', 'security'];
 
     public function __construct(
@@ -37,7 +40,7 @@ class DictionaryController extends DefaultController
     #[OA\Tag(name: 'Dictionary')]
     public function locales(): JsonResponse
     {
-        return $this->response(new LocalesResponse(self::AVAILABLE_LOCALES));
+        return $this->response(new LocalesResponse(UserLocale::getValues()));
     }
 
     #[Route('/translations/{locale}', name: 'dictionaries_translations', methods: ['GET'])]
@@ -51,7 +54,7 @@ class DictionaryController extends DefaultController
         name: 'locale',
         in: 'path',
         required: true,
-        schema: new OA\Schema(type: 'string', enum: ['en', 'pl'])
+        schema: new OA\Schema(type: 'string', enum: UserLocale::class)
     )]
     #[OA\Response(
         response: 200,
@@ -62,7 +65,7 @@ class DictionaryController extends DefaultController
     #[OA\Tag(name: 'Dictionary')]
     public function translations(string $locale): JsonResponse
     {
-        if (!in_array($locale, self::AVAILABLE_LOCALES)) {
+        if (!in_array($locale, UserLocale::getValues())) {
             throw new BadRequestHttpException($this->translator->trans('error.invalid_locale', [], 'messages'));
         }
 
@@ -73,6 +76,17 @@ class DictionaryController extends DefaultController
         );
 
         return $this->response($response);
+    }
+
+    #[Route('/roles', name: 'dictionaries_roles', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[OA\Get(path: '/api/dictionaries/roles', summary: 'Get available roles', description: 'Returns list of available user roles')]
+    #[OA\Response(response: 200, description: 'List of available roles', content: new Model(type: RolesResponse::class))]
+    #[OA\Response(response: 401, description: 'Unauthorized')]
+    #[OA\Tag(name: 'Dictionary')]
+    public function roles(): JsonResponse
+    {
+        return $this->response(new RolesResponse(UserRole::getValues()));
     }
 
     private function loadDomainTranslations(string $domain, string $locale): array

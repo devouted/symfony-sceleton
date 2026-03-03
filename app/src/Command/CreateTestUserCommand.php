@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Dto\Request\CreateUserRequest;
 use App\Entity\User;
+use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -43,7 +44,7 @@ class CreateTestUserCommand extends Command
         $dto = new CreateUserRequest();
         $dto->email = $input->getArgument('email');
         $dto->password = $input->getArgument('password');
-        $dto->roles = $input->getOption('admin') ? ['ROLE_USER', 'ROLE_ADMIN'] : ['ROLE_USER'];
+        $dto->roles = $input->getOption('admin') ? [UserRole::ROLE_USER->value, UserRole::ROLE_ADMIN->value] : [UserRole::ROLE_USER->value];
 
         $violations = $this->validator->validate($dto);
         if (count($violations) > 0) {

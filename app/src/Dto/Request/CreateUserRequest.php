@@ -23,5 +23,5 @@ class CreateUserRequest
     #[Assert\All([
         new Assert\Choice(callback: [UserRole::class, 'getValues'], message: 'user.roles.invalid')
     ])]
-    public array $roles = ['ROLE_USER'];
+    public array $roles = [UserRole::ROLE_USER->value];
 }

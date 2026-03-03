@@ -4,6 +4,7 @@ namespace App\Dto\Response;
 
 use App\Dto\ResponseDtoInterface;
 use App\Entity\User;
+use App\Enum\UserLocale;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,7 +19,9 @@ readonly class UserResponse implements ResponseDtoInterface
         #[OA\Property(type: 'array', items: new OA\Items(type: 'string'), example: ['ROLE_USER'])]
         public array   $roles,
         #[OA\Property(example: null, nullable: true)]
-        public ?string $deletedAt
+        public ?string $deletedAt,
+        #[OA\Property(example: 'en')]
+        public string  $locale = UserLocale::EN->value
     ) {}
 
     public static function fromEntity(User|UserInterface $user): self
@@ -27,7 +30,8 @@ readonly class UserResponse implements ResponseDtoInterface
             $user->getId(),
             $user->getEmail(),
             $user->getRoles(),
-            $user->getDeletedAt()?->format('Y-m-d H:i:s')
+            $user->getDeletedAt()?->format('Y-m-d H:i:s'),
+            $user->getLocale()
         );
     }
 }

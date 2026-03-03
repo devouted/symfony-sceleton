@@ -84,6 +84,16 @@ readonly class ResourceResponse implements ResponseDtoInterface
   - Dodaj komentarz z opisem zmian (`notes`)
 - ⚠️ **ZAWSZE weryfikuj** status po zmianie używając `redmineDeveloperAgent___redmine_get_issue`
 
+### Spike — specjalny workflow
+- Spike nie przechodzi przez Code Review
+- Flow: `Backlog → In Progress → Done` (`status_id=11`) lub `Backlog` (jeśli anulowany)
+- Po zakończeniu eksploracji/audytu ustaw status na `Done` (`status_id=11`) bezpośrednio
+
+### Bug — specjalny workflow
+- Bug nie przechodzi przez Code Review
+- Flow: `Backlog → In Progress → QA` (`status_id=10`) lub `Backlog` (jeśli anulowany)
+- Po naprawieniu błędu ustaw status na `QA` (`status_id=10`) bezpośrednio
+
 ### Wznów pracę (po QA)
 - Status: `In Progress` (jeśli QA cofnęło)
 - Jeśli QA cofnęło zadanie:

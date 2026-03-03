@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import LanguageSwitch from "./LanguageSwitch";
 
 export default function Header() {
 	const navigate = useNavigate();
@@ -15,7 +16,8 @@ export default function Header() {
 			<div className="flex-1">
 				<h1 className="text-2xl font-bold">CRM Admin Panel</h1>
 			</div>
-			<div className="flex-none">
+			<div className="flex-none gap-2">
+				<LanguageSwitch />
 				<button 
 					onClick={handleLogout}
 					className="btn btn-sm bg-white/20 hover:bg-white/30 text-white border-white/40 hover:border-white/60"

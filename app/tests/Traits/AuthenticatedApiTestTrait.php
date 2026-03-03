@@ -13,7 +13,7 @@ trait AuthenticatedApiTestTrait
     {
         $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'test@example.com',
-            'password' => 'test123'
+            'password' => 'Test@1234'
         ]));
         
         return json_decode($this->client->getResponse()->getContent(), true)['token'];

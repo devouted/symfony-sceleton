@@ -19,7 +19,7 @@ class AuthControllerTest extends WebTestCase
     {
         $this->client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'email' => 'test@example.com',
-            'password' => 'test123'
+            'password' => 'Test@1234'
         ]));
 
         $this->assertResponseIsSuccessful();
@@ -43,7 +43,7 @@ class AuthControllerTest extends WebTestCase
     {
         $token = $this->loginAsAdmin();
 
-        $this->client->request('GET', '/api/me', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']));
+        $this->client->request('GET', '/api/users/me', [], [], array_merge($this->getAuthHeaders($token), ['CONTENT_TYPE' => 'application/json']));
 
         $this->assertResponseIsSuccessful();
         $data = $this->getJsonResponse();
@@ -54,13 +54,13 @@ class AuthControllerTest extends WebTestCase
 
     public function testMeEndpointUnauthorized(): void
     {
-        $this->client->request('GET', '/api/me');
+        $this->client->request('GET', '/api/users/me');
         $this->assertResponseStatusCodeSame(403);
     }
 
     public function testMeEndpointInvalidToken(): void
     {
-        $this->client->request('GET', '/api/me', [], [], [
+        $this->client->request('GET', '/api/users/me', [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer invalid.token.here',
             'CONTENT_TYPE' => 'application/json'
         ]);
